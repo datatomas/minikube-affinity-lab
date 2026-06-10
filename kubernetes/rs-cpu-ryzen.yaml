@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: rs-cpu-ryzen
+  namespace: gpu-test
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: prober-ryzen
+  template:
+    metadata:
+      labels:
+        app: prober-ryzen
+    spec:
+      imagePullSecrets:
+        - name: dockerhub-secret
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: cpu
+                    operator: In
+                    values:
+                      - ryzen
+      containers:
+        - name: http-prober
+          image: datatomas/uppercut_analytics:http-prober
+          imagePullPolicy: Always
+          livenessProbe:
+            exec:
+              command: ["sh","-c","python -c 'print(\"ok\")'"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 10
