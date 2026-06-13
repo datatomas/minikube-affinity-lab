@@ -10,7 +10,3 @@ kubectl get nodes
 kubectl create ns affinity-lab --dry-run=client -o yaml | kubectl apply -f -
 kubectl create ns ingress-lab --dry-run=client -o yaml | kubectl apply -f -
 
-
-kubectl apply -n affinity-lab -f kubernetes/rs-gpu-nvidia.yaml
-kubectl apply -n affinity-lab -f kubernetes/rs-gpu-exists.yaml
-kubectl apply -n affinity-lab -f kubernetes/rs-cpu-ryzen.yaml
