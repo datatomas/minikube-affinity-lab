@@ -1,17 +1,16 @@
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
-  name: rs-cpu-ryzen
-  namespace: gpu-test
+  name: rs-gpu-notin-nvidia
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: prober-ryzen
+      app: prober-gpu-notin-nvidia
   template:
     metadata:
       labels:
-        app: prober-ryzen
+        app: prober-gpu-notin-nvidia
     spec:
       imagePullSecrets:
         - name: dockerhub-secret
@@ -20,17 +19,17 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
               - matchExpressions:
-                  - key: cpu
-                    operator: In
+                  - key: gpu
+                    operator: NotIn
                     values:
-                      - ryzen
+                      - nvidia
       containers:
         - name: http-prober
           image: datatomas/uppercut_analytics:http-prober
           imagePullPolicy: Always
           livenessProbe:
             exec:
-              command: ["sh","-c","python -c 'print(\"ok\")'"]
+              command: ["sh", "-c", "python -c 'print(\"ok\")'"]
             initialDelaySeconds: 5
             periodSeconds: 5
             timeoutSeconds: 2
