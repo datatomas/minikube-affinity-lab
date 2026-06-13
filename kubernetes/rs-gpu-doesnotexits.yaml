@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: rs-gpu-doesnotexist
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: prober-gpu-doesnotexist
+  template:
+    metadata:
+      labels:
+        app: prober-gpu-doesnotexist
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: gpu
+                    operator: DoesNotExist
+      containers:
+        - name: http-prober
+          image: datatomas/uppercut_analytics:http-prober
+          imagePullPolicy: Always
+          livenessProbe:
+            exec:
+              command: ["sh", "-c", "python -c 'print(\"ok\")'"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 10
