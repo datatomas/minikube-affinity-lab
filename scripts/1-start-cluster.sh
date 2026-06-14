@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -e
 #verify they're created
 minikube start \
   --nodes=3 \

@@ -1,3 +1,5 @@
+#!/bin/bash
+set -e
 kubectl label node minikube \
   pool=system \
   workload=system \
