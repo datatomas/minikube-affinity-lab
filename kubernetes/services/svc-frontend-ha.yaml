@@ -1,0 +1,13 @@
+# kubernetes/services/svc-frontend-ha.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-frontend-ha
+spec:
+  selector:
+    app: frontend-ha
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+  type: ClusterIP

@@ -12,6 +12,8 @@ spec:
       labels:
         app: frontend-ha
     spec:
+      imagePullSecrets:
+        - name: dockerhub-secret
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
