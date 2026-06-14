@@ -275,6 +275,25 @@ Do not commit the Cloudflare token. The scripts create Kubernetes secrets from e
 
 The `Gateway` and `HTTPRoute` objects are Gateway API resources. They still need a controller.
 
+Manifest map:
+
+```text
+kubernetes/gateway/api-gateway.yaml
+  NGINX Gateway Fabric Gateway.
+  Creates ingress-lab/lab-gateway with gatewayClassName: nginx.
+
+kubernetes/gateway/httproute.yaml
+  NGINX Gateway Fabric HTTPRoute.
+  Attaches to ingress-lab/lab-gateway.
+
+kubernetes/gateway/httproute-traefik.yaml
+  Traefik Gateway API HTTPRoute.
+  Attaches to traefik/traefik-gateway created by the Traefik Helm chart.
+
+kubernetes/gateway/referencegrant-traefik-to-ingress-lab.yaml
+  Allows the Traefik HTTPRoute in namespace traefik to route to svc-frontend-ha in namespace ingress-lab.
+```
+
 Use NGINX Gateway Fabric:
 
 ```bash
