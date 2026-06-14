@@ -8,3 +8,12 @@ spec:
     - name: http
       protocol: HTTP
       port: 80
+      hostname: uppercutanalytics.com
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: uppercutanalytics.com
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: uppercutanalytics-tls

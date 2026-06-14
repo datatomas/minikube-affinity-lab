@@ -3,8 +3,14 @@ kind: HTTPRoute
 metadata:
   name: frontend-route
 spec:
+  hostnames:
+    - uppercutanalytics.com
+    - www.uppercutanalytics.com
   parentRefs:
     - name: lab-gateway
+      sectionName: http
+    - name: lab-gateway
+      sectionName: https
   rules:
     - matches:
         - path:
