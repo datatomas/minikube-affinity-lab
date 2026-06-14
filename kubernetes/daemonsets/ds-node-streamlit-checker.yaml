@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ds-node-streamlit-checker
+spec:
+  selector:
+    matchLabels:
+      app: node-streamlit-checker
+  template:
+    metadata:
+      labels:
+        app: node-streamlit-checker
+    spec:
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Equal
+          value: "true"
+          effect: NoSchedule
+      containers:
+        - name: checker
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                echo "node=$(hostname) checking streamlit service";
+                wget -qO- http://svc-frontend-ha.ingress-lab.svc.cluster.local/_stcore/health || true;
+                sleep 30;
+              done
