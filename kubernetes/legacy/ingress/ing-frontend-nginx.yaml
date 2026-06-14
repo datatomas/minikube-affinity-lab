@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-cloudflare
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - uppercutanalytics.com
+        - www.uppercutanalytics.com
+      secretName: uppercutanalytics-tls
+  rules:
+    - host: uppercutanalytics.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: svc-frontend-ha
+                port:
+                  number: 80
+    - host: www.uppercutanalytics.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: svc-frontend-ha
+                port:
+                  number: 80
