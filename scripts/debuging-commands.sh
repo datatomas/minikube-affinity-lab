@@ -25,3 +25,19 @@ docker pull datatomas/uppercut_analytics:http-prober
 
 # delete all the pods in a namespace
 kubectl delete pods -n affinity-lab --all
+
+# get pods from frontend lab
+kubectl get pods -n ingress-lab -o wide -w
+
+
+# port forward  front end service
+kubectl port-forward -n ingress-lab svc/svc-frontend-ha 8080:80
+# test access to frontend
+curl -i http://localhost:8080/_stcore/health
+# from browser
+http://localhost:8080
+http://localhost:8080/_stcore/health
+# chmod all scripts
+
+chmod +x scripts/*.sh
+chmod +x scripts/8-test-frontend-post-forward.sh
