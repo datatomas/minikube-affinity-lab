@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: uppercutanalytics-tls
+spec:
+  secretName: uppercutanalytics-tls
+  issuerRef:
+    name: letsencrypt-cloudflare
+    kind: ClusterIssuer
+  dnsNames:
+    - uppercutanalytics.com
+    - www.uppercutanalytics.com
