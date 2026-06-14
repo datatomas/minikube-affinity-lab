@@ -40,4 +40,29 @@ http://localhost:8080/_stcore/health
 # chmod all scripts
 
 chmod +x scripts/*.sh
-chmod +x scripts/8-test-frontend-post-forward.sh
+chmod +x scripts/test-frontend-post-forward.sh
+
+# install Gateway API CRDs, then choose a Gateway controller
+./scripts/7-install-gateway-api-crds.sh
+./scripts/8-helm-install-nginx-gateway-fabric.sh
+./scripts/9-deploy-gateway.sh
+kubectl get gatewayclass
+kubectl get gateway -n ingress-lab
+kubectl get httproute -n ingress-lab
+./scripts/test-gateway-from-cluster.sh
+
+# alternate Traefik Gateway API controller path
+./scripts/11-helm-install-traefik-gateway-api.sh
+./scripts/12-deploy-traefik-gateway-api.sh
+
+# legacy classic Ingress examples
+./scripts/legacy/deploy-traefik-ingress.sh
+./scripts/legacy/deploy-nginx-ingress.sh
+
+# domain TLS with Cloudflare DNS-01 and Let's Encrypt
+./scripts/14-install-cert-manager.sh
+export CLOUDFLARE_API_TOKEN='your-cloudflare-api-token'
+./scripts/15-create-cloudflare-clusterissuer.sh
+./scripts/16-deploy-domain-certificate.sh
+kubectl describe certificate uppercutanalytics-tls -n ingress-lab
+kubectl get secret uppercutanalytics-tls -n ingress-lab

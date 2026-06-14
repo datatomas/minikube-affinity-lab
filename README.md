@@ -240,6 +240,69 @@ Container failed liveness probe, will be restarted
 Back-off restarting failed container
 ```
 
+## Domain TLS With Cloudflare
+
+Create a Cloudflare API token with these settings:
+
+```text
+Permissions:
+  Zone / DNS / Edit
+  Zone / Zone / Read
+
+Zone Resources:
+  Include / Specific zone / uppercutanalytics.com
+
+Client IP Address Filtering:
+  Leave blank unless your outbound IP is stable
+```
+
+Install cert-manager, then create a Cloudflare-backed Let's Encrypt issuer and certificate:
+
+```bash
+./scripts/14-install-cert-manager.sh
+
+export CLOUDFLARE_API_TOKEN='your-cloudflare-api-token'
+
+./scripts/15-create-cloudflare-clusterissuer.sh
+./scripts/16-deploy-domain-certificate.sh
+```
+
+The Let's Encrypt email is set in `kubernetes/certificates/clusterissuer-letsencrypt-cloudflare.yaml`.
+
+Do not commit the Cloudflare token. The scripts create Kubernetes secrets from environment variables.
+
+## Gateway API Controllers
+
+The `Gateway` and `HTTPRoute` objects are Gateway API resources. They still need a controller.
+
+Use NGINX Gateway Fabric:
+
+```bash
+./scripts/7-install-gateway-api-crds.sh
+./scripts/8-helm-install-nginx-gateway-fabric.sh
+./scripts/9-deploy-gateway.sh
+```
+
+Delete the NGINX-backed Gateway before trying Traefik:
+
+```bash
+kubectl delete httproute frontend-route -n ingress-lab
+kubectl delete gateway lab-gateway -n ingress-lab
+./scripts/10-uninstall-nginx-gateway-fabric.sh
+```
+
+Use Traefik as a Gateway API controller:
+
+```bash
+./scripts/7-install-gateway-api-crds.sh
+./scripts/11-helm-install-traefik-gateway-api.sh
+./scripts/12-deploy-traefik-gateway-api.sh
+```
+
+This is not the classic Kubernetes `Ingress` object path. It is Gateway API plus the Traefik controller.
+
+Legacy classic Ingress examples live under `kubernetes/legacy/ingress/` and `scripts/legacy/`.
+
 ## Troubleshooting
 
 ### ImagePullBackOff
