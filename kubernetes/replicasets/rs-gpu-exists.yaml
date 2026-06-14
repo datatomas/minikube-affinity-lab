@@ -12,6 +12,8 @@ spec:
       labels:
         app: prober-gpu-exists
     spec:
+      imagePullSecrets:
+        - name: dockerhub-secret
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:

@@ -12,6 +12,8 @@ spec:
       labels:
         app: prober-workload-in-ai
     spec:
+      imagePullSecrets:
+        - name: dockerhub-secret
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
