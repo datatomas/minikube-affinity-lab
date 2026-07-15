@@ -28,6 +28,10 @@ kubectl label node minikube-m03 agentpool=userpool
 kubectl get nodes -L agentpool
 
 
-# verify storage and snapshot classes
+# verify storage and snapshot classes 
+"""you should have
+csi-hostpath-sc
+csi-hostpath-snapclass
+"""
 kubectl get storageclass
 kubectl get volumesnapshotclass
