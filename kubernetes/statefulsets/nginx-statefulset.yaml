@@ -32,7 +32,7 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: csi-hostpath-sc
+        storageClassName: storage-class-wait
         resources:
           requests:
             storage: 1Gi
