@@ -35,3 +35,13 @@ csi-hostpath-snapclass
 """
 kubectl get storageclass
 kubectl get volumesnapshotclass
+
+
+# get provisioner name
+
+kubectl get sc csi-hostpath-sc \
+  -o jsonpath='{.provisioner}{"\n"}'
+
+# you should see hostpath.csi.k8s.io
+
+
