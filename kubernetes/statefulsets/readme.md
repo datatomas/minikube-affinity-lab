@@ -476,3 +476,115 @@ The deciding question is:
 Use dynamic provisioning when Kubernetes should create storage on demand.
 
 Use static provisioning when Kubernetes must consume existing or administrator-controlled storage.
+
+
+## Storage Topology and `WaitForFirstConsumer`
+
+Some storage is tied to a specific node or zone.
+
+Examples include:
+
+* Local disks.
+* Hostpath-based CSI drivers.
+* Azure Disks.
+* AWS EBS.
+* Other zonal block storage.
+
+With the default `Immediate` binding mode, Kubernetes may provision the volume before the scheduler decides where the Pod should run.
+
+```text
+PVC created
+     |
+     v
+PV provisioned immediately
+     |
+     v
+PV tied to node or zone
+     |
+     v
+Pod scheduling rules evaluated
+     |
+     v
+Possible topology conflict
+```
+
+This lab uses:
+
+```yaml
+volumeBindingMode: WaitForFirstConsumer
+```
+
+With `WaitForFirstConsumer`, storage provisioning waits until Kubernetes knows where the Pod can be scheduled.
+
+```text
+Pod scheduling constraints
+     |
+     v
+Eligible node selected
+     |
+     v
+CSI provisions compatible storage
+     |
+     v
+Pod and PV use compatible topology
+```
+
+This is especially important because the StatefulSet uses:
+
+```yaml
+nodeSelector:
+  agentpool: userpool
+```
+
+The `nodeSelector` controls where the **Pod** may run.
+
+`WaitForFirstConsumer` allows storage provisioning to consider those scheduling constraints before creating or binding the volume.
+
+They solve different problems:
+
+```text
+nodeSelector / affinity
+        |
+        v
+Where can the Pod run?
+
+WaitForFirstConsumer
+        |
+        v
+When should storage be provisioned
+so its topology matches the Pod?
+```
+
+For topology-constrained storage, delayed binding helps avoid Pods remaining `Pending` because the PV was provisioned on an incompatible node or zone.
+
+The StorageClass used in this lab is:
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: csi-hostpath-wait
+provisioner: hostpath.csi.k8s.io
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+```
+
+The StatefulSet explicitly requests it:
+
+```yaml
+storageClassName: csi-hostpath-wait
+```
+
+The simplified rule is:
+
+```text
+Node or zone constrained storage
+        -> prefer WaitForFirstConsumer
+
+Shared network storage
+        -> Immediate may be acceptable
+```
+
+`WaitForFirstConsumer` is not specific to StatefulSets. It becomes important whenever Pod scheduling and storage topology must agree.
+
