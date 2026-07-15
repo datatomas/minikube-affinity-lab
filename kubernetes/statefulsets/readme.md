@@ -588,3 +588,6 @@ Shared network storage
 
 `WaitForFirstConsumer` is not specific to StatefulSets. It becomes important whenever Pod scheduling and storage topology must agree.
 
+
+# minikube extr adocumentation
+https://minikube.sigs.k8s.io/docs/tutorials/volume_snapshots_and_csi/?utm_source=chatgpt.com
